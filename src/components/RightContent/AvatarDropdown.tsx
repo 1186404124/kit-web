@@ -17,7 +17,7 @@ export type GlobalHeaderRightProps = {
 const loginOut = async () => {
   await outLogin();
   const { query, pathname } = history.location;
-  const { redirect } = query;
+  const { redirect }: any = query;
   // Note: There may be security issues, please note
   if (window.location.pathname !== '/user/login' && !redirect) {
     history.replace({
