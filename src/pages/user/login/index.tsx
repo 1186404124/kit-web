@@ -7,14 +7,14 @@ import {
   UserOutlined,
   WeiboCircleOutlined,
 } from '@ant-design/icons';
-import { Alert, Space, message, Tabs } from 'antd';
+import { Alert, message, Space, Tabs } from 'antd';
 import React, { useState } from 'react';
 import ProForm, { ProFormCaptcha, ProFormCheckbox, ProFormText } from '@ant-design/pro-form';
-import { useIntl, Link, history, FormattedMessage, SelectLang, useModel } from 'umi';
+// @ts-ignore
+import { history, Link, SelectLang, useIntl, useModel } from 'umi';
 import Footer from '@/components/Footer';
 import type { LoginParamsType } from '@/services/login';
 import { fakeAccountLogin, getFakeCaptcha } from '@/services/login';
-
 import styles from './index.less';
 
 const LoginMessage: React.FC<{
@@ -29,15 +29,17 @@ const LoginMessage: React.FC<{
     showIcon
   />
 );
-
 /**
  * 此方法会跳转到 redirect 参数所在的位置
  */
+
 const goto = () => {
   if (!history) return;
   setTimeout(() => {
     const { query } = history.location;
-    const { redirect } = query as { redirect: string };
+    const { redirect } = query as {
+      redirect: string;
+    };
     history.push(redirect || '/');
   }, 10);
 };
@@ -45,41 +47,45 @@ const goto = () => {
 const Login: React.FC = () => {
   const [submitting, setSubmitting] = useState(false);
   const [userLoginState, setUserLoginState] = useState<API.LoginStateType>({});
+  const [loginData, setLoginData] = useState<API.LoginStateType>({});
   const [type, setType] = useState<string>('account');
   const { initialState, setInitialState } = useModel('@@initialState');
-
   const intl = useIntl();
 
   const fetchUserInfo = async () => {
-    const userInfo = await initialState?.fetchUserInfo?.();
+    // const userInfo = await initialState?.fetchUserInfo?.();
+    const userInfo = loginData;
+
     if (userInfo) {
-      setInitialState({
-        ...initialState,
-        currentUser: userInfo,
-      });
+      // @ts-ignore
+      setInitialState({ ...initialState, currentUser: userInfo });
     }
   };
 
   const handleSubmit = async (values: LoginParamsType) => {
     setSubmitting(true);
+
     try {
       // 登录
       const msg = await fakeAccountLogin({ ...values, type });
-      if (msg.status === 'ok') {
+
+      if (msg.success) {
+        setLoginData(msg);
         message.success('登录成功！');
         await fetchUserInfo();
         goto();
         return;
-      }
-      // 如果失败去设置用户错误信息
+      } // 如果失败去设置用户错误信息
+
       setUserLoginState(msg);
     } catch (error) {
       message.error('登录失败，请重试！');
     }
+
     setSubmitting(false);
   };
-  const { status, type: loginType } = userLoginState;
 
+  const { success, msg: loginType } = userLoginState;
   return (
     <div className={styles.container}>
       <div className={styles.lang}>{SelectLang && <SelectLang />}</div>
@@ -136,7 +142,7 @@ const Login: React.FC = () => {
               />
             </Tabs>
 
-            {status === 'error' && loginType === 'account' && (
+            {success && loginType === 'account' && (
               <LoginMessage
                 content={intl.formatMessage({
                   id: 'pages.login.accountLogin.errorMessage',
@@ -159,12 +165,7 @@ const Login: React.FC = () => {
                   rules={[
                     {
                       required: true,
-                      message: (
-                        <FormattedMessage
-                          id="pages.login.username.required"
-                          defaultMessage="请输入用户名!"
-                        />
-                      ),
+                      message: '用户名是必填项！',
                     },
                   ]}
                 />
@@ -181,19 +182,14 @@ const Login: React.FC = () => {
                   rules={[
                     {
                       required: true,
-                      message: (
-                        <FormattedMessage
-                          id="pages.login.password.required"
-                          defaultMessage="请输入密码！"
-                        />
-                      ),
+                      message: '密码是必填项！',
                     },
                   ]}
                 />
               </>
             )}
 
-            {status === 'error' && loginType === 'mobile' && <LoginMessage content="验证码错误" />}
+            {success && loginType === 'mobile' && <LoginMessage content="验证码错误" />}
             {type === 'mobile' && (
               <>
                 <ProFormText
@@ -209,21 +205,11 @@ const Login: React.FC = () => {
                   rules={[
                     {
                       required: true,
-                      message: (
-                        <FormattedMessage
-                          id="pages.login.phoneNumber.required"
-                          defaultMessage="请输入手机号！"
-                        />
-                      ),
+                      message: '手机号是必填项！',
                     },
                     {
                       pattern: /^1\d{10}$/,
-                      message: (
-                        <FormattedMessage
-                          id="pages.login.phoneNumber.invalid"
-                          defaultMessage="手机号格式错误！"
-                        />
-                      ),
+                      message: '不合法的手机号！',
                     },
                   ]}
                 />
@@ -246,6 +232,7 @@ const Login: React.FC = () => {
                         defaultMessage: '获取验证码',
                       })}`;
                     }
+
                     return intl.formatMessage({
                       id: 'pages.login.phoneLogin.getVerificationCode',
                       defaultMessage: '获取验证码',
@@ -255,19 +242,16 @@ const Login: React.FC = () => {
                   rules={[
                     {
                       required: true,
-                      message: (
-                        <FormattedMessage
-                          id="pages.login.captcha.required"
-                          defaultMessage="请输入验证码！"
-                        />
-                      ),
+                      message: '验证码是必填项！',
                     },
                   ]}
                   onGetCaptcha={async (mobile) => {
                     const result = await getFakeCaptcha(mobile);
+
                     if (result === false) {
                       return;
                     }
+
                     message.success('获取验证码成功！验证码为：1234');
                   }}
                 />
@@ -279,19 +263,19 @@ const Login: React.FC = () => {
               }}
             >
               <ProFormCheckbox noStyle name="autoLogin">
-                <FormattedMessage id="pages.login.rememberMe" defaultMessage="自动登录" />
+                自动登录
               </ProFormCheckbox>
               <a
                 style={{
                   float: 'right',
                 }}
               >
-                <FormattedMessage id="pages.login.forgotPassword" defaultMessage="忘记密码" />
+                忘记密码 ?
               </a>
             </div>
           </ProForm>
           <Space className={styles.other}>
-            <FormattedMessage id="pages.login.loginWith" defaultMessage="其他登录方式" />
+            其他登录方式 :
             <AlipayCircleOutlined className={styles.icon} />
             <TaobaoCircleOutlined className={styles.icon} />
             <WeiboCircleOutlined className={styles.icon} />
@@ -303,4 +287,5 @@ const Login: React.FC = () => {
   );
 };
 
+// @ts-ignore
 export default Login;

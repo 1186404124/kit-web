@@ -15,8 +15,10 @@ declare namespace API {
   };
 
   export type LoginStateType = {
-    status?: 'ok' | 'error';
-    type?: string;
+    success?: true | false;
+    msg?: string;
+    code?: number;
+    data?: any;
   };
 
   export type NoticeIconData = {

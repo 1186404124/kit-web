@@ -8,9 +8,9 @@
 export default {
   dev: {
     '/api/': {
-      // target: 'https://proapi.azurewebsites.net',
+      target: 'http://192.168.31.156:8080',
       changeOrigin: true,
-      pathRewrite: { '^': '' },
+      pathRewrite: { '^/api': '' },
     },
   },
   test: {

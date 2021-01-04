@@ -43,6 +43,12 @@
     component: './ListTableList',
   },
   {
+    name: 'cost.list.name',
+    icon: 'table',
+    path: '/cost',
+    component: './CostList',
+  },
+  {
     path: '/',
     redirect: '/welcome',
   },

@@ -8,8 +8,9 @@ import {
   ProFormRadio,
   ProFormDateTimePicker,
 } from '@ant-design/pro-form';
+// @ts-ignore
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { useIntl, FormattedMessage } from 'umi';
-
 import type { TableListItem } from '../data.d';
 
 export type FormValueType = {
@@ -19,7 +20,6 @@ export type FormValueType = {
   time?: string;
   frequency?: string;
 } & Partial<TableListItem>;
-
 export type UpdateFormProps = {
   onCancel: (flag?: boolean, formVals?: FormValueType) => void;
   onSubmit: (values: FormValueType) => Promise<void>;
@@ -38,7 +38,9 @@ const UpdateForm: React.FC<UpdateFormProps> = (props) => {
         return (
           <Modal
             width={640}
-            bodyStyle={{ padding: '32px 40px 48px' }}
+            bodyStyle={{
+              padding: '32px 40px 48px',
+            }}
             destroyOnClose
             title={intl.formatMessage({
               id: 'pages.searchTable.updateForm.ruleConfig',
@@ -72,22 +74,17 @@ const UpdateForm: React.FC<UpdateFormProps> = (props) => {
             id: 'pages.searchTable.updateForm.ruleName.nameLabel',
             defaultMessage: '规则名称',
           })}
-          width="m"
+          width={'md'}
           rules={[
             {
               required: true,
-              message: (
-                <FormattedMessage
-                  id="pages.searchTable.updateForm.ruleName.nameRules"
-                  defaultMessage="请输入规则名称！"
-                />
-              ),
+              message: '请输入规则名称！',
             },
           ]}
         />
         <ProFormTextArea
           name="desc"
-          width="m"
+          width="md"
           label={intl.formatMessage({
             id: 'pages.searchTable.updateForm.ruleDesc.descLabel',
             defaultMessage: '规则描述',
@@ -99,12 +96,7 @@ const UpdateForm: React.FC<UpdateFormProps> = (props) => {
           rules={[
             {
               required: true,
-              message: (
-                <FormattedMessage
-                  id="pages.searchTable.updateForm.ruleDesc.descRules"
-                  defaultMessage="请输入至少五个字符的规则描述！"
-                />
-              ),
+              message: '请输入至少五个字符的规则描述！',
               min: 5,
             },
           ]}
@@ -122,7 +114,7 @@ const UpdateForm: React.FC<UpdateFormProps> = (props) => {
       >
         <ProFormSelect
           name="target"
-          width="m"
+          width="md"
           label={intl.formatMessage({
             id: 'pages.searchTable.updateForm.object',
             defaultMessage: '监控对象',
@@ -134,7 +126,7 @@ const UpdateForm: React.FC<UpdateFormProps> = (props) => {
         />
         <ProFormSelect
           name="template"
-          width="m"
+          width="md"
           label={intl.formatMessage({
             id: 'pages.searchTable.updateForm.ruleProps.templateLabel',
             defaultMessage: '规则模板',
@@ -174,7 +166,7 @@ const UpdateForm: React.FC<UpdateFormProps> = (props) => {
       >
         <ProFormDateTimePicker
           name="time"
-          width="m"
+          width="md"
           label={intl.formatMessage({
             id: 'pages.searchTable.updateForm.schedulingPeriod.timeLabel',
             defaultMessage: '开始时间',
@@ -182,12 +174,7 @@ const UpdateForm: React.FC<UpdateFormProps> = (props) => {
           rules={[
             {
               required: true,
-              message: (
-                <FormattedMessage
-                  id="pages.searchTable.updateForm.schedulingPeriod.timeRules"
-                  defaultMessage="请选择开始时间！"
-                />
-              ),
+              message: '请选择开始时间！',
             },
           ]}
         />
@@ -197,7 +184,7 @@ const UpdateForm: React.FC<UpdateFormProps> = (props) => {
             id: 'pages.searchTable.updateForm.object',
             defaultMessage: '监控对象',
           })}
-          width="m"
+          width="md"
           valueEnum={{
             month: '月',
             week: '周',
